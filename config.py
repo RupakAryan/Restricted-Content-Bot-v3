@@ -28,7 +28,7 @@ DB_NAME      = os.getenv("DB_NAME", "rupak")
 
 # ─── OWNER / CONTROL SETTINGS ───────────────────────────────────────────────────
 OWNER_ID     = list(map(int, os.getenv("OWNER_ID", "7338678521").split()))  # space-separated list
-STRING       = os.getenv("BQHJcRUAtGxk7IAORf8Mw7iv263Gd1mJ1Pb6UiPx5JdQcEQGhKaDhpUQJuXAqLShyI9O-234K7w_wLoXxJt-GRgWqgpjRimAFON-JkmRo15Zqgwgt8UwBAcFeiI_Cu2cG7m58dY9ki0v5YzAT7qmPWotnFDMYWHVs-U6kSUVgc1fnlYF_DS0xneqJ3EAQPu5G-CoNG-adWMZstjAySulhMzwsoMBMihgAafUQ4kt19Epb2e3R41SwjR3S2aALFcmknu10bUyskqKau9HeKMqjYE1Qos2H4ilImU8jVNVZI3489t6xRY_m9k5SzVSVtdkL97cMEQqX1jOmXC8pxaZgFu29J1AyAAAAAFYVa-RAA", None)  # optional session string
+STRING       = os.getenv("BQG7YfYAdzOGJzQqHSZEN8d0C66WtzL--r0FVoIf4ZIr5sJUexX5ekEcSBw5WdbqntOqRJf6d5b1SdCuaajLv2CRU5Dv49W56eI-_2lG8uxHW82TC1PE9_IKAjXK16NbR7ToculkDU6KwIrpCqUuLOIvWxYteZWmzHCXXjj0HHk1a33XQ00mx92Ajh0sG03xmpI9bLejjfX3CdFpjpzYNAFbSDXfSMAuujZABiwTtDy9TE_yOeK0mMnQW2PorSJmoeFLtSkC0B3xIKzMfy3UYMMpt7Sd2oJ6rJMh23MQYxXRdhdhCTnPSkge_BaGkgjVUeGuv1HahGIbO9QU-jZrhTtrqQcofgAAAAG1a1j5AA", None)  # optional session string
 LOG_GROUP    = int(os.getenv("LOG_GROUP", "0"))
 FORCE_SUB    = int(os.getenv("FORCE_SUB", "0"))
 
@@ -76,6 +76,7 @@ P0 = {
 # ════════════════════════════════════════════════════════════════════════════════
 # ░ DEVGAGAN
 # ════════════════════════════════════════════════════════════════════════════════
+
 
 
 
