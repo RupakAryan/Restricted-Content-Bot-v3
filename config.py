@@ -20,14 +20,14 @@ YTUB_COOKIES = """
 """
 
 # ─── BOT / DATABASE CONFIG ──────────────────────────────────────────────────────
-API_ID       = os.getenv("API_ID", "29978901")
-API_HASH     = os.getenv("API_HASH", "500fc876c5356cf04ed3698912dc2edf")
+API_ID       = os.getenv("API_ID", "29057526")
+API_HASH     = os.getenv("API_HASH", "92cb1f82af717e97a2ad7e1670c35b21")
 BOT_TOKEN    = os.getenv("BOT_TOKEN", "")
 MONGO_DB     = os.getenv("MONGO_DB", "mongodb+srv://<rupak>:<aryan>@cluster0.cbyim0l.mongodb.net/?appName=Cluster0")
 DB_NAME      = os.getenv("DB_NAME", "rupak")
 
 # ─── OWNER / CONTROL SETTINGS ───────────────────────────────────────────────────
-OWNER_ID     = list(map(int, os.getenv("OWNER_ID", "5776977809").split()))  # space-separated list
+OWNER_ID     = list(map(int, os.getenv("OWNER_ID", "7338678521").split()))  # space-separated list
 STRING       = os.getenv("BQHJcRUAtGxk7IAORf8Mw7iv263Gd1mJ1Pb6UiPx5JdQcEQGhKaDhpUQJuXAqLShyI9O-234K7w_wLoXxJt-GRgWqgpjRimAFON-JkmRo15Zqgwgt8UwBAcFeiI_Cu2cG7m58dY9ki0v5YzAT7qmPWotnFDMYWHVs-U6kSUVgc1fnlYF_DS0xneqJ3EAQPu5G-CoNG-adWMZstjAySulhMzwsoMBMihgAafUQ4kt19Epb2e3R41SwjR3S2aALFcmknu10bUyskqKau9HeKMqjYE1Qos2H4ilImU8jVNVZI3489t6xRY_m9k5SzVSVtdkL97cMEQqX1jOmXC8pxaZgFu29J1AyAAAAAFYVa-RAA", None)  # optional session string
 LOG_GROUP    = int(os.getenv("LOG_GROUP", "0"))
 FORCE_SUB    = int(os.getenv("FORCE_SUB", "0"))
@@ -46,7 +46,7 @@ PREMIUM_LIMIT  = int(os.getenv("PREMIUM_LIMIT", "9999999"))
 
 # ─── UI / LINKS ─────────────────────────────────────────────────────────────────
 JOIN_LINK     = os.getenv("JOIN_LINK", "")
-ADMIN_CONTACT = os.getenv("ADMIN_CONTACT", "@Checkshhej")
+ADMIN_CONTACT = os.getenv("ADMIN_CONTACT", "@Extrac_txt_bot")
 
 # ════════════════════════════════════════════════════════════════════════════════
 # ░ PREMIUM PLANS CONFIGURATION
@@ -76,6 +76,7 @@ P0 = {
 # ════════════════════════════════════════════════════════════════════════════════
 # ░ DEVGAGAN
 # ════════════════════════════════════════════════════════════════════════════════
+
 
 
 
