@@ -29,7 +29,7 @@ DB_NAME      = os.getenv("DB_NAME", "rupak")
 # ─── OWNER / CONTROL SETTINGS ───────────────────────────────────────────────────
 OWNER_ID     = list(map(int, os.getenv("OWNER_ID", "5776977809").split()))  # space-separated list
 STRING       = os.getenv("BQHJcRUAtGxk7IAORf8Mw7iv263Gd1mJ1Pb6UiPx5JdQcEQGhKaDhpUQJuXAqLShyI9O-234K7w_wLoXxJt-GRgWqgpjRimAFON-JkmRo15Zqgwgt8UwBAcFeiI_Cu2cG7m58dY9ki0v5YzAT7qmPWotnFDMYWHVs-U6kSUVgc1fnlYF_DS0xneqJ3EAQPu5G-CoNG-adWMZstjAySulhMzwsoMBMihgAafUQ4kt19Epb2e3R41SwjR3S2aALFcmknu10bUyskqKau9HeKMqjYE1Qos2H4ilImU8jVNVZI3489t6xRY_m9k5SzVSVtdkL97cMEQqX1jOmXC8pxaZgFu29J1AyAAAAAFYVa-RAA", None)  # optional session string
-LOG_GROUP    = int(os.getenv("LOG_GROUP", "-1002007698143"))
+LOG_GROUP    = int(os.getenv("LOG_GROUP", "0"))
 FORCE_SUB    = int(os.getenv("FORCE_SUB", "0"))
 
 # ─── SECURITY KEYS ──────────────────────────────────────────────────────────────
@@ -76,6 +76,7 @@ P0 = {
 # ════════════════════════════════════════════════════════════════════════════════
 # ░ DEVGAGAN
 # ════════════════════════════════════════════════════════════════════════════════
+
 
 
 
