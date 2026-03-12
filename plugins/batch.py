@@ -441,6 +441,142 @@ async def cancel_cmd(c, m):
     else:
         await m.reply_text('No active batch process found.')
 
+#@X.on_message(filters.text & filters.private & ~login_in_progress & ~filters.command([
+   # 'start', 'batch', 'cancel', 'login', 'logout', 'stop', 'set', 
+   # 'pay', 'redeem', 'gencode', '
+
 @X.on_message(filters.text & filters.private & ~login_in_progress & ~filters.command([
     'start', 'batch', 'cancel', 'login', 'logout', 'stop', 'set', 
-    'pay', 'redeem', 'gencode', '
+    'pay', 'redeem', 'gencode', 'single', 'generate', 'keyinfo', 'encrypt', 'decrypt', 'keys', 'setbot', 'rembot']))
+async def text_handler(c, m):
+    uid = m.from_user.id
+    if uid not in Z: return
+    s = Z[uid].get('step')
+    x = await get_ubot(uid)
+    if not x:
+        await message.reply("Add your bot /setbot `token`")
+        return
+
+    if s == 'start':
+        L = m.text
+        i, d, lt = E(L)
+        if not i or not d:
+            await m.reply_text('Invalid link format.')
+            Z.pop(uid, None)
+            return
+        Z[uid].update({'step': 'count', 'cid': i, 'sid': d, 'lt': lt})
+        await m.reply_text('How many messages?')
+
+    elif s == 'start_single':
+        L = m.text
+        i, d, lt = E(L)
+        if not i or not d:
+            await m.reply_text('Invalid link format.')
+            Z.pop(uid, None)
+            return
+
+        Z[uid].update({'step': 'process_single', 'cid': i, 'sid': d, 'lt': lt})
+        i, s, lt = Z[uid]['cid'], Z[uid]['sid'], Z[uid]['lt']
+        pt = await m.reply_text('Processing...')
+        
+        ubot = UB.get(uid)
+        if not ubot:
+            await pt.edit('Add bot with /setbot first')
+            Z.pop(uid, None)
+            return
+        
+        uc = await get_uclient(uid)
+        if not uc:
+            await pt.edit('Cannot proceed without user client.')
+            Z.pop(uid, None)
+            return
+            
+        if is_user_active(uid):
+            await pt.edit('Active task exists. Use /stop first.')
+            Z.pop(uid, None)
+            return
+
+        try:
+            msg = await get_msg(ubot, uc, i, s, lt)
+            if msg:
+                res = await process_msg(ubot, uc, msg, str(m.chat.id), lt, uid, i)
+                await pt.edit(f'1/1: {res}')
+            else:
+                await pt.edit('Message not found')
+        except Exception as e:
+            await pt.edit(f'Error: {str(e)[:50]}')
+        finally:
+            Z.pop(uid, None)
+
+    elif s == 'count':
+        if not m.text.isdigit():
+            await m.reply_text('Enter valid number.')
+            return
+        
+        count = int(m.text)
+        maxlimit = PREMIUM_LIMIT if await is_premium_user(uid) else FREEMIUM_LIMIT
+
+        if count > maxlimit:
+            await m.reply_text(f'Maximum limit is {maxlimit}.')
+            return
+
+        Z[uid].update({'step': 'process', 'did': str(m.chat.id), 'num': count})
+        i, s, n, lt = Z[uid]['cid'], Z[uid]['sid'], Z[uid]['num'], Z[uid]['lt']
+        success = 0
+
+        pt = await m.reply_text('Processing batch...')
+        uc = await get_uclient(uid)
+        ubot = UB.get(uid)
+        
+        if not uc or not ubot:
+            await pt.edit('Missing client setup')
+            Z.pop(uid, None)
+            return
+            
+        if is_user_active(uid):
+            await pt.edit('Active task exists')
+            Z.pop(uid, None)
+            return
+        
+        await add_active_batch(uid, {
+            "total": n,
+            "current": 0,
+            "success": 0,
+            "cancel_requested": False,
+            "progress_message_id": pt.id
+            })
+        
+        try:
+            for j in range(n):
+                
+                if should_cancel(uid):
+                    await pt.edit(f'Cancelled at {j}/{n}. Success: {success}')
+                    break
+                
+                await update_batch_progress(uid, j, success)
+                
+                mid = int(s) + j
+                
+                try:
+                    msg = await get_msg(ubot, uc, i, mid, lt)
+                    if msg:
+                        res = await process_msg(ubot, uc, msg, str(m.chat.id), lt, uid, i)
+                        if 'Done' in res or 'Copied' in res or 'Sent' in res:
+                            success += 1
+                    else:
+                        pass
+                except Exception as e:
+                    try: await pt.edit(f'{j+1}/{n}: Error - {str(e)[:30]}')
+                    except: pass
+                
+                await asyncio.sleep(10)
+            
+            if j+1 == n:
+                await m.reply_text(f'Batch Completed ✅ Success: {success}/{n}')
+        
+        finally:
+            await remove_active_batch(uid)
+            Z.pop(uid, None)
+
+    
+
