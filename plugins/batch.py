@@ -85,7 +85,7 @@ async def upd_dlg(c):
         print(f'Failed to update dialogs: {e}')
         return False
 
-# fixed the old group of 2021-2022 extraction 🌝 (buy krne ka fayda nhi ab old group) ✅ 
+# fixed the old group of 2021-2022 extraction ðŸŒ (buy krne ka fayda nhi ab old group) âœ… 
 async def get_msg(c, u, i, d, lt):
     try:
         if lt == 'public':
@@ -209,10 +209,10 @@ async def prog(c, t, C, h, m, st):
         P[m] = step
         c_mb = c / (1024 * 1024)
         t_mb = t / (1024 * 1024)
-        bar = '🟢' * int(p / 10) + '🔴' * (10 - int(p / 10))
+        bar = 'ðŸŸ¢' * int(p / 10) + 'ðŸ”´' * (10 - int(p / 10))
         speed = c / (time.time() - st) / (1024 * 1024) if time.time() > st else 0
         eta = time.strftime('%M:%S', time.gmtime((t - c) / (speed * 1024 * 1024))) if speed > 0 else '00:00'
-        await C.edit_message_text(h, m, f"__**Pyro Handler...**__\n\n{bar}\n\n⚡**__Completed__**: {c_mb:.2f} MB / {t_mb:.2f} MB\n📊 **__Done__**: {p:.2f}%\n🚀 **__Speed__**: {speed:.2f} MB/s\n⏳ **__ETA__**: {eta}\n\n**__Powered by Team SPY__**")
+        await C.edit_message_text(h, m, f"__**Pyro Handler...**__\n\n{bar}\n\nâš¡**__Completed__**: {c_mb:.2f} MB / {t_mb:.2f} MB\nðŸ“Š **__Done__**: {p:.2f}%\nðŸš€ **__Speed__**: {speed:.2f} MB/s\nâ³ **__ETA__**: {eta}\n\n**__Powered by Team SPY__**")
         if p >= 100: P.pop(m, None)
 
 async def send_direct(c, m, tcid, ft=None, rtmid=None):
@@ -314,19 +314,27 @@ async def process_msg(c, u, m, d, lt, uid, i):
                             'voice': Y.send_voice, 'audio': Y.send_audio, 
                             'photo': Y.send_photo, 'document': Y.send_document}
                 
-                for mtype, func in send_funcs.items():
-                    if f.endswith('.mp4'): mtype = 'video'
-                    if getattr(m, mtype, None):
-                        sent = await func(LOG_GROUP, f, thumb=th if mtype == 'video' else None, 
-                                        duration=dur if mtype == 'video' else None,
-                                        height=h if mtype == 'video' else None,
-                                        width=w if mtype == 'video' else None,
-                                        caption=ft if m.caption and mtype not in ['video_note', 'voice'] else None, 
-                                        reply_to_message_id=rtmid, progress=prog, progress_args=(c, d, p.id, st))
-                        break
-                else:
+                doc_exts = ['.pdf', '.zip', '.rar', '.7z', '.tar', '.gz', '.doc', '.docx',
+                            '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.epub', '.apk', '.exe']
+                _fext = os.path.splitext(f)[1].lower()
+                # âœ… FIX: If it's a document file, always send as document
+                if _fext in doc_exts:
                     sent = await Y.send_document(LOG_GROUP, f, thumb=th, caption=ft if m.caption else None,
                                                 reply_to_message_id=rtmid, progress=prog, progress_args=(c, d, p.id, st))
+                else:
+                    for mtype, func in send_funcs.items():
+                        if f.endswith('.mp4'): mtype = 'video'
+                        if getattr(m, mtype, None):
+                            sent = await func(LOG_GROUP, f, thumb=th if mtype == 'video' else None, 
+                                            duration=dur if mtype == 'video' else None,
+                                            height=h if mtype == 'video' else None,
+                                            width=w if mtype == 'video' else None,
+                                            caption=ft if m.caption and mtype not in ['video_note', 'voice'] else None, 
+                                            reply_to_message_id=rtmid, progress=prog, progress_args=(c, d, p.id, st))
+                            break
+                    else:
+                        sent = await Y.send_document(LOG_GROUP, f, thumb=th, caption=ft if m.caption else None,
+                                                    reply_to_message_id=rtmid, progress=prog, progress_args=(c, d, p.id, st))
                 
                 await c.copy_message(d, LOG_GROUP, sent.id)
                 os.remove(f)
@@ -340,8 +348,17 @@ async def process_msg(c, u, m, d, lt, uid, i):
             try:
                 video_extensions = ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm', '.m4v', '.3gp', '.ogv']
                 audio_extensions = ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.wma', '.m4a', '.opus', '.aiff', '.ac3']
+                # Document extensions - these should NEVER be sent as video/audio
+                document_extensions = ['.pdf', '.zip', '.rar', '.7z', '.tar', '.gz', '.doc', '.docx', 
+                                       '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.epub', '.apk', '.exe']
                 file_ext = os.path.splitext(f)[1].lower()
-                if m.video or (m.document and file_ext in video_extensions):
+                
+                # âœ… FIX: Check document extensions FIRST - never convert PDF/ZIP/RAR to video
+                if file_ext in document_extensions:
+                    await c.send_document(tcid, document=f, caption=ft if m.caption else None,
+                                        progress=prog, progress_args=(c, d, p.id, st),
+                                        reply_to_message_id=rtmid)
+                elif m.video or (m.document and file_ext in video_extensions):
                     mtd = await get_video_metadata(f)
                     dur, h, w = mtd['duration'], mtd['width'], mtd['height']
                     th = await screenshot(f, dur, d)
@@ -426,135 +443,4 @@ async def cancel_cmd(c, m):
 
 @X.on_message(filters.text & filters.private & ~login_in_progress & ~filters.command([
     'start', 'batch', 'cancel', 'login', 'logout', 'stop', 'set', 
-    'pay', 'redeem', 'gencode', 'single', 'generate', 'keyinfo', 'encrypt', 'decrypt', 'keys', 'setbot', 'rembot']))
-async def text_handler(c, m):
-    uid = m.from_user.id
-    if uid not in Z: return
-    s = Z[uid].get('step')
-    x = await get_ubot(uid)
-    if not x:
-        await message.reply("Add your bot /setbot `token`")
-        return
-
-    if s == 'start':
-        L = m.text
-        i, d, lt = E(L)
-        if not i or not d:
-            await m.reply_text('Invalid link format.')
-            Z.pop(uid, None)
-            return
-        Z[uid].update({'step': 'count', 'cid': i, 'sid': d, 'lt': lt})
-        await m.reply_text('How many messages?')
-
-    elif s == 'start_single':
-        L = m.text
-        i, d, lt = E(L)
-        if not i or not d:
-            await m.reply_text('Invalid link format.')
-            Z.pop(uid, None)
-            return
-
-        Z[uid].update({'step': 'process_single', 'cid': i, 'sid': d, 'lt': lt})
-        i, s, lt = Z[uid]['cid'], Z[uid]['sid'], Z[uid]['lt']
-        pt = await m.reply_text('Processing...')
-        
-        ubot = UB.get(uid)
-        if not ubot:
-            await pt.edit('Add bot with /setbot first')
-            Z.pop(uid, None)
-            return
-        
-        uc = await get_uclient(uid)
-        if not uc:
-            await pt.edit('Cannot proceed without user client.')
-            Z.pop(uid, None)
-            return
-            
-        if is_user_active(uid):
-            await pt.edit('Active task exists. Use /stop first.')
-            Z.pop(uid, None)
-            return
-
-        try:
-            msg = await get_msg(ubot, uc, i, s, lt)
-            if msg:
-                res = await process_msg(ubot, uc, msg, str(m.chat.id), lt, uid, i)
-                await pt.edit(f'1/1: {res}')
-            else:
-                await pt.edit('Message not found')
-        except Exception as e:
-            await pt.edit(f'Error: {str(e)[:50]}')
-        finally:
-            Z.pop(uid, None)
-
-    elif s == 'count':
-        if not m.text.isdigit():
-            await m.reply_text('Enter valid number.')
-            return
-        
-        count = int(m.text)
-        maxlimit = PREMIUM_LIMIT if await is_premium_user(uid) else FREEMIUM_LIMIT
-
-        if count > maxlimit:
-            await m.reply_text(f'Maximum limit is {maxlimit}.')
-            return
-
-        Z[uid].update({'step': 'process', 'did': str(m.chat.id), 'num': count})
-        i, s, n, lt = Z[uid]['cid'], Z[uid]['sid'], Z[uid]['num'], Z[uid]['lt']
-        success = 0
-
-        pt = await m.reply_text('Processing batch...')
-        uc = await get_uclient(uid)
-        ubot = UB.get(uid)
-        
-        if not uc or not ubot:
-            await pt.edit('Missing client setup')
-            Z.pop(uid, None)
-            return
-            
-        if is_user_active(uid):
-            await pt.edit('Active task exists')
-            Z.pop(uid, None)
-            return
-        
-        await add_active_batch(uid, {
-            "total": n,
-            "current": 0,
-            "success": 0,
-            "cancel_requested": False,
-            "progress_message_id": pt.id
-            })
-        
-        try:
-            for j in range(n):
-                
-                if should_cancel(uid):
-                    await pt.edit(f'Cancelled at {j}/{n}. Success: {success}')
-                    break
-                
-                await update_batch_progress(uid, j, success)
-                
-                mid = int(s) + j
-                
-                try:
-                    msg = await get_msg(ubot, uc, i, mid, lt)
-                    if msg:
-                        res = await process_msg(ubot, uc, msg, str(m.chat.id), lt, uid, i)
-                        if 'Done' in res or 'Copied' in res or 'Sent' in res:
-                            success += 1
-                    else:
-                        pass
-                except Exception as e:
-                    try: await pt.edit(f'{j+1}/{n}: Error - {str(e)[:30]}')
-                    except: pass
-                
-                await asyncio.sleep(10)
-            
-            if j+1 == n:
-                await m.reply_text(f'Batch Completed ✅ Success: {success}/{n}')
-        
-        finally:
-            await remove_active_batch(uid)
-            Z.pop(uid, None)
-
-
+    'pay', 'redeem', 'gencode', '
